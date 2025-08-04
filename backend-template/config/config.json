@@ -1,0 +1,44 @@
+{
+  "development": {
+    "username": "root",
+    "password": "",
+    "database": "gaming_center_db",
+    "host": "localhost",
+    "port": 3306,
+    "dialect": "mariadb",
+    "logging": false,
+    "dialectOptions": {
+      "connectTimeout": 60000,
+      "acquireTimeout": 60000,
+      "timeout": 60000
+    },
+    "define": {
+      "timestamps": true,
+      "underscored": false,
+      "freezeTableName": false
+    },
+    "pool": {
+      "max": 10,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": "",
+    "database": "gaming_center_test_db",
+    "host": "localhost",
+    "port": 3306,
+    "dialect": "mariadb",
+    "logging": false,
+    "dialectOptions": {
+      "connectTimeout": 60000
+    }
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "mariadb",
+    "logging": false
+  }
+}

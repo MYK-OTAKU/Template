@@ -1,0 +1,43 @@
+{
+  "liveServer.settings.port": 5503,
+  "[html]": {
+    "editor.autoClosingComments": "always",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.bracketSameLine": true,
+    "editor.linkedEditing": true,
+    "prettier.singleAttributePerLine": true
+  },
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.preferredDarkColorTheme": "Atom One Dark",
+  "workbench.preferredHighContrastColorTheme": "Atom One Dark",
+  "bladeFormatter.format.indentInnerHtml": true,
+  "html.format.extraLiners": "",
+  "html-css-class-completion.HTMLLanguages": [
+  
+    "html",
+    "vue",
+    "razor",
+    "blade",
+    "handlebars",
+    "twig",
+    "django-html",
+    "php",
+    "markdown",
+    "erb",
+    "ejs",
+    "svelte"
+  ],
+  "html-css-class-completion.CSSLanguages": [
+
+    "css",
+    "sass",
+    "scss"
+  ],
+  "editor.quickSuggestions": {
+    "comments": "inline"
+  },
+  "workbench.sash.size": 8,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "liveServer.settings.AdvanceCustomBrowserCmdLine": "",
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
+}

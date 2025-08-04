@@ -1,0 +1,229 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variables CSS pour les couleurs personnalisées */
+:root {
+  /* Couleurs par défaut */
+  --color-primary: 139 92 246; /* purple-500 */
+  --color-secondary: 6 182 212; /* cyan-500 */
+  --color-accent: 236 72 153; /* pink-500 */
+  
+  /* Taille de police par défaut */
+  --font-size-base: 16px;
+}
+
+/* Styles de base pour l'application */
+body {
+  font-size: var(--font-size-base);
+  transition: font-size 0.3s ease;
+}
+
+/* Animations personnalisées */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes progress-bar {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* Styles pour les notifications */
+.notification-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.notification-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.notification-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification-exit-active {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Styles pour les thèmes personnalisés */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-primary) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-primary) / 0.5);
+}
+
+/* Mode sombre */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-primary) / 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-primary) / 0.6);
+}
+
+/* Styles pour les focus */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+/* Styles pour les boutons personnalisés */
+.btn-primary {
+  background: linear-gradient(135deg, rgb(var(--color-primary) / 1), rgb(var(--color-primary) / 0.8));
+  @apply text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, rgb(var(--color-secondary) / 1), rgb(var(--color-secondary) / 0.8));
+  @apply text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, rgb(var(--color-accent) / 1), rgb(var(--color-accent) / 0.8));
+  @apply text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+/* Styles pour les cartes */
+.card {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-all duration-200;
+}
+
+.card:hover {
+  @apply shadow-lg;
+  box-shadow: 0 10px 25px rgb(var(--color-primary) / 0.1);
+}
+
+/* Styles pour les inputs */
+.input-field {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200;
+}
+
+/* Styles pour les badges */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  background: rgb(var(--color-primary) / 0.1);
+  color: rgb(var(--color-primary) / 1);
+}
+
+.badge-secondary {
+  background: rgb(var(--color-secondary) / 0.1);
+  color: rgb(var(--color-secondary) / 1);
+}
+
+.badge-accent {
+  background: rgb(var(--color-accent) / 0.1);
+  color: rgb(var(--color-accent) / 1);
+}
+
+/* Styles pour les alertes */
+.alert {
+  @apply p-4 rounded-lg border;
+}
+
+.alert-info {
+  @apply bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200;
+}
+
+.alert-success {
+  @apply bg-green-50 dark:bg-green-900 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200;
+}
+
+.alert-warning {
+  @apply bg-yellow-50 dark:bg-yellow-900 border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200;
+}
+
+.alert-error {
+  @apply bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-700 text-red-800 dark:text-red-200;
+}
+
+/* Styles pour les loaders */
+.spinner {
+  @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+/* Styles pour les tooltips */
+.tooltip {
+  @apply absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg opacity-0 pointer-events-none transition-opacity duration-200;
+}
+
+.tooltip.show {
+  @apply opacity-100;
+}
+
+/* Styles pour les modales */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all duration-200;
+}
+
+/* Responsive design helpers */
+@media (max-width: 640px) {
+  :root {
+    --font-size-base: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --font-size-base: 16px;
+  }
+}
+

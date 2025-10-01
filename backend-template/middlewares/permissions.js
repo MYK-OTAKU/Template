@@ -15,35 +15,40 @@ const checkPermission = (requiredPermission) => {
         });
       }
 
-      // Récupérer l'utilisateur avec son rôle et ses permissions
-      const user = await User.findByPk(req.user.id, {
-        include: [{
-          model: Role,
-          include: [Permission]
-        }]
-      });
+      // OPTIMISATION: Utiliser req.userPermissions défini par authenticate au lieu de requête DB
+      // Si req.userPermissions n'existe pas, fallback sur requête DB (compatibilité)
+      let userPermissions = req.userPermissions;
 
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'Utilisateur non trouvé'
+      if (!userPermissions) {
+        console.warn('⚠️ [PERMISSIONS] req.userPermissions non défini, requête DB de secours');
+        // Récupérer l'utilisateur avec son rôle et ses permissions (fallback)
+        const user = await User.findByPk(req.user.id, {
+          include: [{
+            model: Role,
+            include: [Permission]
+          }]
         });
-      }
 
-      if (!user.isActive) {
-        return res.status(403).json({
-          success: false,
-          message: 'Compte utilisateur désactivé'
-        });
+        if (!user) {
+          return res.status(401).json({
+            success: false,
+            message: 'Utilisateur non trouvé'
+          });
+        }
+
+        if (!user.isActive) {
+          return res.status(403).json({
+            success: false,
+            message: 'Compte utilisateur désactivé'
+          });
+        }
+
+        userPermissions = user.Role?.Permissions?.map(p => p.name) || [];
+        req.userPermissions = userPermissions;
+        req.user.role = user.Role;
       }
 
       // Vérifier si l'utilisateur a la permission requise
-      const userPermissions = user.Role?.Permissions?.map(p => p.name) || [];
-      
-      // Ajouter les permissions à l'objet req.user pour utilisation ultérieure
-      req.user.permissions = userPermissions;
-      req.user.role = user.Role;
-
       if (!hasPermission(userPermissions, requiredPermission)) {
         return res.status(403).json({
           success: false,
@@ -77,23 +82,29 @@ const checkAnyPermission = (permissions) => {
         });
       }
 
-      const user = await User.findByPk(req.user.id, {
-        include: [{
-          model: Role,
-          include: [Permission]
-        }]
-      });
+      // OPTIMISATION: Utiliser req.userPermissions défini par authenticate
+      let userPermissions = req.userPermissions;
 
-      if (!user || !user.isActive) {
-        return res.status(403).json({
-          success: false,
-          message: 'Accès refusé'
+      if (!userPermissions) {
+        console.warn('⚠️ [PERMISSIONS] req.userPermissions non défini, requête DB de secours');
+        const user = await User.findByPk(req.user.id, {
+          include: [{
+            model: Role,
+            include: [Permission]
+          }]
         });
-      }
 
-      const userPermissions = user.Role?.Permissions?.map(p => p.name) || [];
-      req.user.permissions = userPermissions;
-      req.user.role = user.Role;
+        if (!user || !user.isActive) {
+          return res.status(403).json({
+            success: false,
+            message: 'Accès refusé'
+          });
+        }
+
+        userPermissions = user.Role?.Permissions?.map(p => p.name) || [];
+        req.userPermissions = userPermissions;
+        req.user.role = user.Role;
+      }
 
       // Vérifier si l'utilisateur a au moins une des permissions requises
       const hasAnyPermission = permissions.some(permission => 
@@ -133,23 +144,29 @@ const checkAllPermissions = (permissions) => {
         });
       }
 
-      const user = await User.findByPk(req.user.id, {
-        include: [{
-          model: Role,
-          include: [Permission]
-        }]
-      });
+      // OPTIMISATION: Utiliser req.userPermissions défini par authenticate
+      let userPermissions = req.userPermissions;
 
-      if (!user || !user.isActive) {
-        return res.status(403).json({
-          success: false,
-          message: 'Accès refusé'
+      if (!userPermissions) {
+        console.warn('⚠️ [PERMISSIONS] req.userPermissions non défini, requête DB de secours');
+        const user = await User.findByPk(req.user.id, {
+          include: [{
+            model: Role,
+            include: [Permission]
+          }]
         });
-      }
 
-      const userPermissions = user.Role?.Permissions?.map(p => p.name) || [];
-      req.user.permissions = userPermissions;
-      req.user.role = user.Role;
+        if (!user || !user.isActive) {
+          return res.status(403).json({
+            success: false,
+            message: 'Accès refusé'
+          });
+        }
+
+        userPermissions = user.Role?.Permissions?.map(p => p.name) || [];
+        req.userPermissions = userPermissions;
+        req.user.role = user.Role;
+      }
 
       // Vérifier si l'utilisateur a toutes les permissions requises
       const hasAllPermissions = permissions.every(permission => 

@@ -73,7 +73,7 @@ const SplashScreen = ({ controlled = false, fadeOut = false, maxDuration = 3000 
       </div>
       
       <h1 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
-        GAMING CLUB
+        Dahshboard Template
       </h1>
       
       <div className="mt-6">

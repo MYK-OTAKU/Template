@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AppRoutes from '../../AppRoutes';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+// import { useLanguage } from '../../contexts/LanguageContext'; // Non nécessaire car pas de texte
 
 // Composant principal pour le contenu
 const MainContent = () => {
   const location = useLocation();
   const { isInternalNavigation } = useAuth();
+  // const { getTranslation } = useLanguage(); // Non utilisé car pas de texte à traduire
 
   // Version simplifiée des variants pour éviter les flashs
   const pageVariants = {
@@ -34,6 +36,7 @@ const MainContent = () => {
           transition={pageTransition}
           className="min-h-[calc(100vh-6rem)]"
         >
+          {/* AppRoutes affiche le contenu qui lui, utilise le contexte de langue */}
           <AppRoutes />
         </motion.div>
       </AnimatePresence>

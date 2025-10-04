@@ -10,10 +10,10 @@ import Home from '../../pages/Home/Home';
 import Users from '../../pages/Users/Users';
 import Roles from '../../pages/Roles/Roles';
 import Permissions from '../../pages/Permissions/Permissions';
-import Postes from '../../pages/Postes/Postes';
 import Settings from '../../pages/Settings/Settings';
 import Monitoring from '../../pages/Monitoring/Monitoring';
 import Notifications from '../../pages/Notifications/Notifications'
+
 const Dashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -159,11 +159,6 @@ const Dashboard = () => {
               {/* ✅ CORRECTION: Utiliser PERMISSIONS_VIEW */}
               <Route path="/permissions" element={
                 hasPermission('PERMISSIONS_VIEW') ? <Permissions /> : <Navigate to="/dashboard" replace />
-              } />
-              
-              {/* Routes postes - Permission POSTES_VIEW */}
-              <Route path="/postes" element={
-                hasPermission('POSTES_VIEW') ? <Postes /> : <Navigate to="/dashboard" replace />
               } />
               
               {/* Routes monitoring - Permission MONITORING_VIEW */}

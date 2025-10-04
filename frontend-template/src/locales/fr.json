@@ -3,13 +3,20 @@
     "login": "Connexion",
     "logout": "Déconnexion",
     "email": "Email",
-    "password": "Mot de passe",
+    "passwordLabel": "Mot de passe",
     "forgotPassword": "Mot de passe oublié ?",
     "rememberMe": "Se souvenir de moi",
     "loginButton": "Se connecter",
     "loginError": "Email ou mot de passe incorrect",
     "loginSuccess": "Connexion réussie",
-    "logoutSuccess": "Déconnexion réussie"
+    "logoutSuccess": "Déconnexion réussie",
+    "usernameLabel": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "copyright": "Tous droits réservés.",
+    "logoFallback": "DT",
+    "logoAlt": "Logo Dashboard Template",
+    "processing": "Traitement..."
   },
   "navigation": {
     "dashboard": "Tableau de bord",
@@ -61,7 +68,7 @@
   "settingsDescription": "Personnalisez votre expérience",
   "saveButton": "Sauvegarder",
   "generalTab": "Général",
-  "appearanceTab": "Apparence", 
+  "appearanceTab": "Apparence",
   "languageTab": "Langue",
   "notificationsTab": "Notifications",
   "accountTab": "Compte",
@@ -79,7 +86,7 @@
   "accountInfoTitle": "Informations du compte",
   "systemInfoTitle": "Informations système",
   "themeLight": "Clair",
-  "themeDark": "Sombre", 
+  "themeDark": "Sombre",
   "themeAuto": "Auto",
   "themeLightDesc": "Interface claire",
   "themeDarkDesc": "Interface sombre",
@@ -98,7 +105,7 @@
   "activePermissions": "Permissions Actives",
   "securityPermissions": "permissions de sécurité",
   "systemStatus": "État du Système",
-  "systemUptime": "Temps de fonctionnement", 
+  "systemUptime": "Temps de fonctionnement",
   "databaseStatus": "Base de données",
   "online": "En ligne",
   "lastBackup": "Dernière sauvegarde",
@@ -114,7 +121,7 @@
   "dashboard": {
     "title": "Tableau de bord",
     "welcome": "Bienvenue",
-    "overview": "Aperçu",
+    "overview": "Vue d'ensemble",
     "statistics": "Statistiques",
     "recentActivity": "Activité récente",
     "quickActions": "Actions rapides",
@@ -188,7 +195,7 @@
     "monitoring": "Surveillance",
     "monitoringDescription": "Surveillance des sessions et activités utilisateurs",
     "sessions": "Sessions",
-    "activities": "Activités", 
+    "activities": "Activités",
     "statistics": "Statistiques",
     "systemMetrics": "Métriques système",
     "userSessions": "Sessions utilisateur",
@@ -221,7 +228,7 @@
     "mockContent1Name": "Article de blog principal",
     "mockContent1Type": "Article",
     "mockContent1Desc": "Article principal sur la page d'accueil",
-    "mockContent2Name": "Bannière promotionnelle", 
+    "mockContent2Name": "Bannière promotionnelle",
     "mockContent2Type": "Media",
     "mockContent2Desc": "Bannière pour les promotions du mois",
     "mockContent3Name": "Guide utilisateur",
@@ -244,17 +251,48 @@
     "reportGenerated": "Rapport généré avec succès"
   },
   "notifications": {
-    "title": "Notifications",
-    "markAsRead": "Marquer comme lu",
-    "markAllAsRead": "Tout marquer comme lu",
-    "deleteNotification": "Supprimer la notification",
-    "notificationRead": "Notification marquée comme lue",
-    "allNotificationsRead": "Toutes les notifications marquées comme lues",
-    "notificationDeleted": "Notification supprimée",
+    "headerTitle": "Notifications",
+    "totalNotificationSingular": "notification au total",
+    "totalNotificationPlural": "notifications au total",
+    "newNotificationSingular": "nouveau",
+    "newNotificationPlural": "nouveaux",
+    "markAllRead": "Tout marquer lu",
+    "clearAll": "Tout effacer",
+    "manageButton": "Gérer",
     "noNotifications": "Aucune notification",
-    "unread": "Non lues",
-    "read": "Lues",
-    "all": "Toutes"
+    "noNotificationsBase": "Aucune notification",
+    "allCaughtUp": "Vous êtes à jour !",
+    "tryAnotherFilter": "Essayez un autre filtre.",
+    "markUnreadTooltip": "Marquer comme non lu",
+    "markReadTooltip": "Marquer comme lu",
+    "deleteTooltip": "Supprimer",
+    "newBadge": "NOUVEAU",
+    "manageLink": "Gérer les notifications",
+    "filter": {
+      "all": "Toutes",
+      "unread": "Non lues",
+      "read": "Lues",
+      "system": "Système",
+      "user": "Utilisateur",
+      "data": "Données",
+      "security": "Sécurité",
+      "unreadAdjective": "non lue",
+      "readAdjective": "lue"
+    },
+    "category": {
+      "system": "Système",
+      "user": "Utilisateur",
+      "data": "Données",
+      "security": "Sécurité"
+    },
+    "type": {
+      "success": "Succès",
+      "error": "Erreur",
+      "warning": "Attention",
+      "info": "Information",
+      "default": "Général"
+    }
+  
   },
   "settings": {
     "title": "Paramètres",
@@ -276,7 +314,8 @@
     "settingsSaved": "Paramètres sauvegardés avec succès",
     "passwordChanged": "Mot de passe changé avec succès",
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
-    "currentPasswordIncorrect": "Le mot de passe actuel est incorrect"
+    "currentPasswordIncorrect": "Le mot de passe actuel est incorrect",
+    "profileSettings": "Paramètres du profil"
   },
   "errors": {
     "generic": "Une erreur est survenue",
@@ -313,5 +352,10 @@
     "dataLoaded": "Données chargées avec succès",
     "dataLoadFailed": "Échec du chargement des données"
   },
-  "appVersionValue": "Template de Tableau de Bord v1.0.0"
+  "appVersionValue": "Template de Tableau de Bord v1.0.0",
+  "header": {
+    "gamingClubTitle": "Dashboard Template",
+    "managementSystemSubtitle": "Système de Gestion",
+    "notificationsHeader": "Notifications"
+  }
 }

@@ -17,7 +17,7 @@ const Monitoring = () => {
   const [activeTab, setActiveTab] = useState('sessions');
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [currentView, setCurrentView] = useState('main');
-  const { translations } = useLanguage();
+  const { translations, getTranslation } = useLanguage();
 
   // ✅ CORRECTION: Fonction pour sélectionner un utilisateur
   const handleUserSelect = (userId) => {
@@ -54,12 +54,12 @@ const Monitoring = () => {
     },
     {
       id: 'activities',
-      label: translations?.activities || 'Activités',
+      label: translations?.activities || 'Activities',
       icon: <Activity size={20} />
     },
     {
       id: 'stats',
-      label: translations?.statistics || 'Statistiques',
+      label: translations?.statistics || 'Statistics',
       icon: <BarChart3 size={20} />
     }
   ];
@@ -70,10 +70,10 @@ const Monitoring = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
             <Clock className="mr-3 text-purple-600" />
-            {translations?.monitoring || 'Monitoring'}
+            {getTranslation('monitoring.title', 'Monitoring')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            {translations?.monitoringDescription || 'Surveillance des sessions et activités utilisateurs'}
+            {getTranslation('monitoring.description', 'Monitor user sessions and activities')}
           </p>
         </div>
 

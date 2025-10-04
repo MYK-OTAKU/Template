@@ -2,6 +2,8 @@ const { Role, Permission, User } = require('../models');
 
 const initDefaultRolesAndPermissions = async () => {
   try {
+    console.log('🔄 [INIT] Début initialisation rôles et permissions...');
+    
     // Créer les permissions par défaut
     const permissions = [
       // Permissions administratives
@@ -25,10 +27,14 @@ const initDefaultRolesAndPermissions = async () => {
 
     // Créer les permissions si elles n'existent pas
     for (const permData of permissions) {
-      await Permission.findOrCreate({
+      const [permission, created] = await Permission.findOrCreate({
         where: { name: permData.name },
         defaults: permData
       });
+      
+      if (created) {
+        console.log(`✅ [INIT] Permission "${permData.name}" créée`);
+      }
     }
 
     // Créer les rôles par défaut
@@ -60,18 +66,30 @@ const initDefaultRolesAndPermissions = async () => {
         }
       });
 
+      if (created) {
+        console.log(`✅ [INIT] Rôle "${roleData.name}" créé`);
+      }
+
       // Récupérer les permissions pour ce rôle
       const rolePermissions = await Permission.findAll({
-        where: { name: roleData.permissions }
+        where: { 
+          name: { 
+            [require('sequelize').Op.in]: roleData.permissions 
+          } 
+        }
       });
 
       // Assigner les permissions au rôle
       await role.setPermissions(rolePermissions);
+      console.log(`✅ [INIT] ${rolePermissions.length} permissions assignées au rôle "${roleData.name}"`);
     }
 
-    console.log('Rôles et permissions initialisés avec succès');
+    // Créer un utilisateur administrateur par défaut
+    await createDefaultAdmin();
+
+    console.log('✅ [INIT] Rôles et permissions initialisés avec succès');
   } catch (error) {
-    console.error('Erreur lors de l\'initialisation des rôles et permissions:', error);
+    console.error('❌ [INIT] Erreur lors de l\'initialisation des rôles et permissions:', error);
     throw error;
   }
 };
@@ -79,11 +97,13 @@ const initDefaultRolesAndPermissions = async () => {
 // Fonction pour créer un administrateur par défaut
 const createDefaultAdmin = async () => {
   try {
+    console.log('🔄 [INIT] Vérification administrateur par défaut...');
+    
     // Vérifier si un administrateur existe déjà
     const adminRole = await Role.findOne({ where: { name: 'Administrateur' } });
     
     if (!adminRole) {
-      console.error('Le rôle Administrateur n\'existe pas');
+      console.error('❌ [INIT] Le rôle Administrateur n\'existe pas');
       return;
     }
 
@@ -92,32 +112,31 @@ const createDefaultAdmin = async () => {
     });
 
     if (existingAdmin) {
-      console.log('Un utilisateur administrateur existe déjà');
+      console.log('ℹ️  [INIT] Un utilisateur administrateur existe déjà:', existingAdmin.username);
       return;
     }
 
     // Créer l'utilisateur administrateur par défaut
-    const bcrypt = require('bcryptjs');
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('admin123', salt);
+    console.log('🔄 [INIT] Création administrateur par défaut...');
     
     const adminUser = await User.create({
       username: 'admin',
-      password: hashedPassword,
+      password: 'admin123', // ✅ Sera haché automatiquement par le hook
       firstName: 'Super',
       lastName: 'Administrateur',
-      email: 'admin@template.com',
+      email: 'admin@gamingcenter.com',
       roleId: adminRole.id,
       isActive: true
     });
 
-    console.log('✅ Utilisateur administrateur créé avec succès !');
+    console.log('✅ [INIT] Utilisateur administrateur créé avec succès !');
     console.log('👤 Username: admin');
     console.log('🔑 Password: admin123');
     console.log('⚠️  Changez le mot de passe après la première connexion !');
     
   } catch (error) {
-    console.error('Erreur lors de la création de l\'administrateur par défaut:', error);
+    console.error('❌ [INIT] Erreur lors de la création de l\'administrateur par défaut:', error);
+    throw error;
   }
 };
 

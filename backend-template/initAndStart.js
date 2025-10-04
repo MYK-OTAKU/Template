@@ -86,19 +86,19 @@ const createDefaultAdmin = async (adminRole) => {
     const existingAdmin = await User.findOne({ where: { username: 'admin' } });
     
     if (existingAdmin) {
-      console.log('👤 Utilisateur admin déjà existant, vérification du mot de passe...');
+      console.log('👤 Utilisateur admin déjà existant');
+      console.log('🔄 Forcer la mise à jour du mot de passe pour assurer la cohérence...');
       
-      // Vérifier si le mot de passe est correct
-      const isPasswordValid = await bcrypt.compare('admin123', existingAdmin.password);
+      // Forcer la mise à jour du mot de passe (le hook beforeUpdate se charge du hachage)
+      await existingAdmin.update({ password: 'admin123' });
+      console.log('✅ Mot de passe admin mis à jour avec succès');
       
-      if (!isPasswordValid) {
-        console.log('🔐 Mise à jour du mot de passe admin...');
-        // Hacher le nouveau mot de passe directement
-        const hashedPassword = await bcrypt.hash('admin123', 12);
-        await existingAdmin.update({ password: hashedPassword });
-        console.log('✅ Mot de passe admin mis à jour');
+      // Vérifier que le mot de passe fonctionne maintenant
+      const testPassword = await bcrypt.compare('admin123', existingAdmin.password);
+      if (testPassword) {
+        console.log('✅ Vérification du mot de passe admin réussie');
       } else {
-        console.log('✅ Mot de passe admin correct');
+        console.log('⚠️ Problème de vérification du mot de passe détecté');
       }
       
       return existingAdmin;
@@ -106,13 +106,11 @@ const createDefaultAdmin = async (adminRole) => {
 
     console.log('👤 Création de l\'utilisateur admin...');
     
-    // Hacher le mot de passe directement (éviter le double hachage)
-    const hashedPassword = await bcrypt.hash('admin123', 12);
-    
-    // Créer l'utilisateur admin avec mot de passe déjà haché
+    // Créer l'utilisateur admin avec mot de passe en clair
+    // Le hook beforeCreate du modèle User se charge automatiquement du hachage
     const adminUser = await User.create({
       username: 'admin',
-      password: hashedPassword, // Mot de passe déjà haché pour éviter le double hachage
+      password: 'admin123', // Mot de passe en clair, sera haché par le hook beforeCreate
       firstName: 'Admin',
       lastName: 'System',
       email: 'admin@template.local',
@@ -125,9 +123,18 @@ const createDefaultAdmin = async (adminRole) => {
     console.log(`🔐 Username: admin`);
     console.log(`🔑 Password: admin123`);
     
+    // Vérifier immédiatement que le mot de passe fonctionne
+    const testPassword = await bcrypt.compare('admin123', adminUser.password);
+    if (testPassword) {
+      console.log('✅ Vérification du mot de passe admin créé réussie');
+    } else {
+      console.log('❌ ERREUR: Le mot de passe admin ne fonctionne pas après création!');
+    }
+    
     return adminUser;
   } catch (error) {
     console.error('❌ Erreur lors de la création de l\'utilisateur admin:', error.message);
+    console.error('🔍 Stack trace:', error.stack);
     throw error;
   }
 };

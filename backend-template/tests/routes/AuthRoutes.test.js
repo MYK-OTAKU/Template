@@ -5,7 +5,7 @@ const { User } = require('../../models');
 const AuthService = require('../../services/AuthService');
 const speakeasy = require('speakeasy');
 
-describe('🔐 AuthRoutes - Routes d\'Authentification Gaming Center', () => {
+describe('🔐 AuthRoutes - Routes d\'Authentification Dashboard Template', () => {
   let adminUser, employeeUser, adminToken, employeeToken;
 
   beforeEach(async () => {

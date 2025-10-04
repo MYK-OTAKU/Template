@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, AlertTriangle } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const ConfirmationDialog = ({
   isOpen,
@@ -7,11 +8,17 @@ const ConfirmationDialog = ({
   message,
   onConfirm,
   onCancel,
-  confirmButtonText = 'Confirmer',
-  cancelButtonText = 'Annuler',
+  confirmButtonText,
+  cancelButtonText,
   confirmButtonClassName = 'bg-red-600 hover:bg-red-700',
   loading = false
 }) => {
+  const { getTranslation } = useLanguage();
+
+  // Utiliser des traductions pour les boutons par défaut si non fournis
+  const defaultConfirmText = confirmButtonText || getTranslation('common.confirm', 'Confirmer');
+  const defaultCancelText = cancelButtonText || getTranslation('common.cancel', 'Annuler');
+
   if (!isOpen) return null;
 
   const handleBackdropClick = (e) => {
@@ -56,7 +63,7 @@ const ConfirmationDialog = ({
             disabled={loading}
             className="px-4 py-2 text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50"
           >
-            {cancelButtonText}
+            {defaultCancelText}
           </button>
           <button
             onClick={onConfirm}
@@ -66,10 +73,10 @@ const ConfirmationDialog = ({
             {loading ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Traitement...</span>
+                <span>{getTranslation('common.processing', 'Traitement...')}</span>
               </div>
             ) : (
-              confirmButtonText
+              defaultConfirmText
             )}
           </button>
         </div>

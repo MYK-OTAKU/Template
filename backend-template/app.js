@@ -11,26 +11,29 @@ const permissionRoutes = require('./routes/PermissionRoutes');
 const monitoringRoutes = require('./routes/MonitoringRoutes');
 const settingsRoutes = require('./routes/SettingsRoutes');
 const { trackUserSession } = require('./middlewares/audit');
-const { errorMiddleware } = require('./utils/errorHandler'); // Importez le middleware d'erreur
-const { standardizeResponse } = require('./utils/responseHandler'); // Ajouter après les importations existantes
+const { errorMiddleware } = require('./utils/errorHandler');
+const { standardizeResponse } = require('./utils/responseHandler');
 const sanitizeResponses = require('./middlewares/responseSanitizer');
-
-const corsMiddleware = require('./middlewares/cors'); // Nouveau middleware à créer
+const { initDefaultRolesAndPermissions } = require('./utils/permissionsInit');
+const corsMiddleware = require('./middlewares/cors');
 const path = require('path');
-const app = express();
+const AuditService = require('./services/AuditService');
 require('dotenv').config();
 
+const app = express();
+
+// ====================
+// MIDDLEWARES
+// ====================
 app
-  .use(favicon(__dirname + '/favicon.ico'))
-   .use(morgan('dev'))
-  .use(corsMiddleware) // Remplacer cors(corsOptions) par notre middleware personnalisé
+  .use(favicon(path.join(__dirname, 'favicon.ico')))
+  .use(morgan('dev'))
+  .use(corsMiddleware)
   .use(bodyParser.json())
-   .use(cookieParser())
+  .use(cookieParser())
   .use(trackUserSession)
-  .use(standardizeResponse) // Ajouter ici
-  .use(sanitizeResponses); // Ajouter ce middleware
-// Configure Express to serve static files
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  .use(standardizeResponse)
+  .use(sanitizeResponses);
 
 // ====================================
 // ROUTES
@@ -40,52 +43,124 @@ app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/settings', settingsRoutes);
-app.use('/api/monitoring', monitoringRoutes); // Ajouter les routes de monitoring
+app.use('/api/monitoring', monitoringRoutes);
 
-// Modified to be compatible with Vercel
+// ====================
+// DATABASE SYNC
+// ====================
 const syncDatabase = async () => {
   try {
-    // Import models to ensure they're defined before syncing
+    console.log('🔄 [SYNC] Début de la synchronisation sécurisée...');
+    
+    // ✅ 1. INITIALISER LA CONNEXION DB EN PREMIER
+    console.log('🔄 [SYNC] Initialisation de la connexion DB...');
+    await initDb();
+    // ✅ 3. SYNCHRONISATION DE LA BASE DE DONNÉES
+    console.log('🔄 [SYNC] Synchronisation de la base de données...');
+    await sequelize.sync({ 
+      force: true, 
+      alter: false, // Pas d'alter en production avec Neon
+      logging: process.env.NODE_ENV === 'development' ? console.log : false 
+    });
+    console.log('✅ [SYNC] Synchronisation de base réussie');
+    
+    await initializeDefaultData();
+        // await initDefaultRolesAndPermissions();
+
+    // ✅ 2. IMPORTER ET SYNCHRONISER LES MODÈLES
+    console.log('🔄 [SYNC] Import des modèles...');
     require('./models');
     
-    // Juste vérifier la connexion sans sync agressif
-    await sequelize.authenticate();
-    console.log('✅ Connexion à la base de données vérifiée.');
+    // ✅ 4. INITIALISATION DES DONNÉES DE BASE DANS L'ORDRE CORRECT
     
-    // Ne pas faire de sync automatique - laisser initAndStart.js gérer l'initialisation
+    console.log('🎉 [SYNC] Synchronisation complète réussie!');
     
   } catch (error) {
-    console.error('Erreur lors de la vérification de la base de données :', error);
+    console.error('❌ [SYNC] Erreur lors de la synchronisation:', error);
     throw error;
   }
 };
 
-// Importer la fonction d'initialisation des permissions depuis le fichier dédié
-const { initDefaultRolesAndPermissions } = require('./utils/permissionsInit');
+// ===== FONCTION D'INITIALISATION DES DONNÉES CORRIGÉE =====
+const initializeDefaultData = async () => {
+  try {
+    console.log('🔄 [INIT] Début de l\'initialisation des données de base...');
+    
+    // ✅ 1. RÔLES ET PERMISSIONS EN PREMIER (dépendances de base)
+    console.log('🔄 [INIT] Initialisation des rôles et permissions...');
+    await initDefaultRolesAndPermissions();
+    console.log('✅ [INIT] Rôles et permissions initialisés');
+    
+    // ✅ 2. TYPES DE POSTES (avant les postes)
+    console.log('🔄 [INIT] Initialisation des types de postes...');
+   
+    
+    // ✅ 3. CLIENT SYSTÈME (après les rôles)
+   
+    
+    console.log('🎉 [INIT] Toutes les données de base initialisées avec succès!');
+    
+  } catch (error) {
+    console.error('❌ [INIT] Erreur critique initialisation données:', error);
+    // Continuer même en cas d'erreur pour ne pas bloquer l'app
+  }
+};
 
-// Execute database synchronization only when starting the server
-// or on first API call in a serverless environment
+
+
+// ✅ DÉMARRAGE AVEC GESTION D'ERREURS ROBUSTE
 if (require.main === module) {
-    const port = process.env.PORT || 3000;
-  syncDatabase().then(() => {
-    app.listen(port, () => console.log(`Our app is running on http://localhost:${port}`));
-  });
+  const port = process.env.PORT || 3000;
+  
+  console.log('🚀 [APP] Démarrage de l\'application Gaming Center...');
+  console.log(`📋 [APP] Environnement: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🗄️ [APP] Base de données: ${process.env.DATABASE_URL ? 'Neon PostgreSQL' : 'Local'}`);
+  
+  syncDatabase()
+    .then(() => {
+      app.listen(port, () => {
+        console.log(`🚀 [APP] Serveur démarré avec succès sur http://localhost:${port}`);
+        console.log('✅ [APP] Toutes les initialisations terminées');
+        console.log('📊 [APP] Application prête à recevoir des requêtes');
+      });
+    })
+    .catch(error => {
+      console.error('❌ [APP] Erreur fatale lors du démarrage:', error);
+      
+      // ✅ MODE DÉGRADÉ AVEC INITIALISATIONS MINIMALES
+      console.log('🔄 [APP] Tentative de démarrage en mode dégradé...');
+      
+      // Essayer au moins d'initialiser la connexion DB
+      initDb()
+        .then(() => {
+          app.listen(port, () => {
+            console.log(`⚠️ [APP] Serveur démarré en mode dégradé sur http://localhost:${port}`);
+            console.log('⚠️ [APP] Certaines fonctionnalités peuvent ne pas être disponibles');
+            console.log('🔧 [APP] Vérifiez les logs pour les erreurs d\'initialisation');
+          });
+        })
+        .catch(dbError => {
+          console.error('❌ [APP] Impossible de se connecter à la base de données:', dbError);
+          console.log('💀 [APP] Arrêt de l\'application - problème de connexion DB critique');
+          process.exit(1);
+        });
+    });
 }
 
-// Middleware de gestion d'erreurs centralisé (à placer après toutes les routes)
+// ====================
+// ERROR HANDLER
+// ====================
 app.use(errorMiddleware);
 
-// Après l'initialisation de l'application
-
-// Nettoyage automatique des sessions inactives toutes les heures
-const AuditService = require('./services/AuditService');
+// ====================
+// CLEANUP TASK
+// ====================
 setInterval(async () => {
   try {
-    await AuditService.cleanupInactiveSessions(240); // Nettoyer après 3h d'inactivité
+    await AuditService.cleanupInactiveSessions(240);
   } catch (error) {
-    console.error('Erreur lors du nettoyage programmé des sessions:', error);
+    console.error('⚠️ [CLEANUP] Erreur nettoyage sessions:', error.message);
   }
-}, 60 * 60 * 1000); // Exécution toutes les heures
+}, 60 * 60 * 1000); // Toutes les heures
 
 module.exports = app;
-

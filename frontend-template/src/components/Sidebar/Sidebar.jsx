@@ -18,12 +18,13 @@ import {
   Bell
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const Sidebar = ({ expanded, toggleSidebar, isMobile }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { user, logout, hasPermission } = useAuth();
-  const { t } = useTranslation();
+  const { getTranslation } = useLanguage();
+  
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -44,7 +45,7 @@ const Sidebar = ({ expanded, toggleSidebar, isMobile }) => {
   const menuItems = [
     { 
       icon: <Home size={20} />, 
-      label: translations.home || 'Accueil', 
+      label: getTranslation('navigation.home', 'Accueil'), 
       path: '/dashboard' 
     }
   ];
@@ -59,35 +60,35 @@ const Sidebar = ({ expanded, toggleSidebar, isMobile }) => {
     // ✅ Utilisateurs - USERS_ADMIN ou ADMIN
     ...(hasPermission('USERS_ADMIN') || hasPermission('ADMIN') ? [{
       icon: <Users size={20} />, 
-      label: translations.users || 'Utilisateurs', 
+      label: getTranslation('navigation.users', 'Utilisateurs'), 
       path: '/dashboard/users'
     }] : []),
     
     // ✅ Rôles - ROLES_MANAGE ou ADMIN  
     ...(hasPermission('ROLES_MANAGE') || hasPermission('ADMIN') ? [{
       icon: <Shield size={20} />, 
-      label: translations.roles || 'Rôles', 
+      label: getTranslation('navigation.roles', 'Rôles'), 
       path: '/dashboard/roles'
     }] : []),
     
     // ✅ Permissions - PERMISSIONS_MANAGE ou ADMIN
     ...(hasPermission('PERMISSIONS_MANAGE') || hasPermission('ADMIN') ? [{
       icon: <Key size={20} />, 
-      label: translations.permissions || 'Permissions', 
+      label: getTranslation('navigation.permissions', 'Permissions'), 
       path: '/dashboard/permissions'
     }] : []),
     
     // ✅ Paramètres - SETTINGS_MANAGE ou ADMIN
     ...(hasPermission('SETTINGS_MANAGE') || hasPermission('ADMIN') ? [{ 
       icon: <Settings size={20} />, 
-      label: translations.settings || 'Paramètres', 
+      label: getTranslation('navigation.settings', 'Paramètres'), 
       path: '/dashboard/settings'
     }] : []),
     
     // ✅ Monitoring - MONITORING_VIEW ou ADMIN
     ...(hasPermission('MONITORING_VIEW') || hasPermission('ADMIN') ? [{
       icon: <ClipboardList size={20} />, 
-      label: translations.supervision || 'Supervision', 
+      label: getTranslation('navigation.monitoring', 'Surveillance'), 
       path: '/dashboard/monitoring'
     }] : [])
   ];
@@ -185,7 +186,7 @@ const Sidebar = ({ expanded, toggleSidebar, isMobile }) => {
               <div className="px-3">
                 {shouldExpandVisual && (
                   <h3 className={`${adminSectionTitleColor} font-semibold text-xs uppercase tracking-wider mb-3 px-3`}>
-                    {translations.administration || 'Administration'}
+                    {getTranslation('navigation.administration', 'Administration')}
                   </h3>
                 )}
                 <ul className="space-y-1">

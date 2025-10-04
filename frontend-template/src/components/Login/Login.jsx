@@ -89,25 +89,10 @@ const LoginPage = () => {
     login
   } = useAuth();
 
-  const { translations } = useLanguage();
+  const { getTranslation } = useLanguage();
   const { effectiveTheme } = useTheme();
 
   const isDarkMode = effectiveTheme === 'dark';
-
-  // Fallback values for translations
-  const safeTranslations = {
-    appTitle: 'Dashboard Template',
-    appSubtitle: 'Modern Web Application',
-    usernameLabel: 'Username',
-    usernamePlaceholder: 'Enter your username',
-    password: 'Password',
-    passwordPlaceholder: 'Enter your password',
-    rememberMe: 'Remember me',
-    loginButton: 'Sign in',
-    loginError: 'Login error',
-    copyright: 'All rights reserved.',
-    ...translations
-  };
 
   // Preload critical images
   useEffect(() => {
@@ -135,7 +120,7 @@ const LoginPage = () => {
 
     } catch (error) {
       console.error('❌ [LOGIN] Erreur de connexion:', error);
-      setErrorMessage(error.message || safeTranslations.loginError);
+      setErrorMessage(error.message || getTranslation('auth.loginError', 'Erreur de connexion'));
       setShowError(true);
     } finally {
       setIsSubmitting(false);
@@ -152,7 +137,7 @@ const LoginPage = () => {
 
   // Utility function to handle copyright securely
   const renderCopyright = () => {
-    const copyrightText = safeTranslations.copyright || 'All rights reserved.';
+    const copyrightText = getTranslation('auth.copyright', 'Tous droits réservés.');
     
     if (copyrightText.includes('MYK')) {
       const parts = copyrightText.split('MYK');
@@ -303,7 +288,7 @@ const LoginPage = () => {
             >
               <OptimizedImage
                 src="/logo2.png"
-                alt="Dashboard Template Logo"
+                alt={getTranslation('auth.logoAlt', 'Logo Dashboard Template')}
                 className="w-full h-full object-cover"
                 placeholder={true}
                 placeholderColor={isDarkMode ? '#8b5cf6' : '#6366f1'}
@@ -312,10 +297,10 @@ const LoginPage = () => {
           </div>
 
           <h1 className={`text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r ${titleGradient} animate-pulse`}>
-            {safeTranslations.appTitle}
+            {getTranslation('app.title', 'Dashboard Template')}
           </h1>
           <p className={`${subtitleColor} text-lg font-medium`}>
-            {safeTranslations.appSubtitle}
+            {getTranslation('app.subtitle', 'Modern Web Application')}
           </p>
           <div className={`w-20 h-1 bg-gradient-to-r ${titleGradient} mx-auto mt-2 rounded-full`} />
         </div>
@@ -324,7 +309,7 @@ const LoginPage = () => {
           {/* Username field */}
           <div className="group">
             <label htmlFor="nomUtilisateur" className={`block text-sm font-medium ${labelColor} mb-2 transition-colors ${labelHoverColor}`}>
-              {safeTranslations.usernameLabel}
+              {getTranslation('auth.usernameLabel', 'Nom d\'utilisateur')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -339,7 +324,7 @@ const LoginPage = () => {
                   backgroundColor: inputBg,
                   border: inputBorder,
                 }}
-                placeholder={safeTranslations.usernamePlaceholder}
+                placeholder={getTranslation('auth.usernamePlaceholder', 'Entrez votre nom d\'utilisateur')}
                 value={nomUtilisateur}
                 onChange={(e) => setNomUtilisateur(e.target.value)}
                 required
@@ -351,7 +336,7 @@ const LoginPage = () => {
           {/* Password field */}
           <div className="group">
             <label htmlFor="motDePasse" className={`block text-sm font-medium ${labelColor} mb-2 transition-colors ${labelHoverColor}`}>
-              {safeTranslations.password}
+              {getTranslation('auth.passwordLabel', 'Mot de passe')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -366,7 +351,7 @@ const LoginPage = () => {
                   backgroundColor: inputBg,
                   border: inputBorder,
                 }}
-                placeholder={safeTranslations.passwordPlaceholder}
+                placeholder={getTranslation('auth.passwordPlaceholder', 'Entrez votre mot de passe')}
                 value={motDePasse}
                 onChange={(e) => setMotDePasse(e.target.value)}
                 required
@@ -394,7 +379,7 @@ const LoginPage = () => {
               disabled={isSubmitting}
             />
             <label htmlFor="remember-me" className={`ml-2 block text-sm ${labelColor} ${labelHoverColor} transition-colors cursor-pointer`}>
-              {safeTranslations.rememberMe}
+              {getTranslation('auth.rememberMe', 'Se souvenir de moi')}
             </label>
           </div>
 
@@ -423,7 +408,7 @@ const LoginPage = () => {
               <div className="w-6 h-6 border-t-2 border-white border-solid rounded-full animate-spin" />
             ) : (
               <>
-                <span className="font-semibold">{safeTranslations.loginButton}</span>
+                <span className="font-semibold">{getTranslation('auth.loginButton', 'Se connecter')}</span>
                 <LogIn size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
               </>
             )}

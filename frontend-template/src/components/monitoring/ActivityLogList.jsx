@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useActivityLogs } from '../../hooks/useMonitoring';
 import { useMonitoring } from '../../contexts/MonitoringContext';
 import { format } from 'date-fns';
@@ -7,6 +8,7 @@ import { Card, Button, Badge, Spinner } from '../ui';
 import { Search, Filter, Eye, User, Calendar, AlertTriangle } from 'lucide-react';
 
 const ActivityLogList = ({ onUserSelect }) => {
+  const { getTranslation } = useLanguage();
   const { filters, updateFilters } = useMonitoring();
   const { data, isLoading, isError, error, refetch } = useActivityLogs();
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,8 +29,8 @@ const ActivityLogList = ({ onUserSelect }) => {
   if (isError) {
     return (
       <div className="p-4 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
-        <p>Erreur lors du chargement des logs: {error.message}</p>
-        <Button onClick={() => refetch()} className="mt-2">Réessayer</Button>
+        <p>{getTranslation('errors.generic', 'Une erreur s\'est produite')}: {error.message}</p>
+        <Button onClick={() => refetch()} className="mt-2">{getTranslation('retry', 'Réessayer')}</Button>
       </div>
     );
   }
@@ -45,7 +47,7 @@ const ActivityLogList = ({ onUserSelect }) => {
       {/* Header avec statistiques */}
       <div>
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-          Journaux d'Activité
+          {getTranslation('monitoring.activityLogs', 'Activity Logs')}
         </h2>
         
         {/* ✅ CORRECTION: Affichage conditionnel des stats */}
@@ -79,7 +81,7 @@ const ActivityLogList = ({ onUserSelect }) => {
         )}
       </div>
 
-      {/* Filtres */}
+      {/* Filters */}
       <Card className="p-4">
         <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 flex gap-2">
@@ -103,12 +105,12 @@ const ActivityLogList = ({ onUserSelect }) => {
               onChange={(e) => handleFilterChange('action', e.target.value || null)}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
-              <option value="">Toutes les actions</option>
-              <option value="LOGIN_SUCCESS">Connexion</option>
-              <option value="LOGOUT">Déconnexion</option>
-              <option value="CREATE">Création</option>
-              <option value="UPDATE">Modification</option>
-              <option value="DELETE">Suppression</option>
+              <option value="">All actions</option>
+              <option value="LOGIN_SUCCESS">Login</option>
+              <option value="LOGOUT">Logout</option>
+              <option value="CREATE">Creation</option>
+              <option value="UPDATE">Update</option>
+              <option value="DELETE">Deletion</option>
             </select>
             
             <select
@@ -116,8 +118,8 @@ const ActivityLogList = ({ onUserSelect }) => {
               onChange={(e) => handleFilterChange('status', e.target.value || null)}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
-              <option value="">Tous les statuts</option>
-              <option value="SUCCESS">Succès</option>
+              <option value="">All statuses</option>
+              <option value="SUCCESS">Success</option>
               <option value="FAILURE">Échec</option>
               <option value="WARNING">Avertissement</option>
             </select>
@@ -132,7 +134,7 @@ const ActivityLogList = ({ onUserSelect }) => {
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Utilisateur
+                  User
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Action
@@ -141,7 +143,7 @@ const ActivityLogList = ({ onUserSelect }) => {
                   Description
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Statut
+                  Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Date
@@ -155,7 +157,7 @@ const ActivityLogList = ({ onUserSelect }) => {
               {logs.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                    Aucun log d'activité trouvé
+                    No activity logs found
                   </td>
                 </tr>
               ) : (

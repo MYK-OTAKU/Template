@@ -9,8 +9,8 @@ import NotificationPanel from '../NotificationPanel/NotificationPanel';
 
 const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = false }) => {
   const { user, logout } = useAuth();
-  const { translations } = useLanguage();
-  const { effectiveTheme } = useTheme(); // ✅ CORRECTION
+  const { getTranslation } = useLanguage();
+  const { effectiveTheme } = useTheme();
   const { getNotificationStats } = useNotification();
   const navigate = useNavigate();
   
@@ -20,17 +20,6 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
   const isDarkMode = effectiveTheme === 'dark';
   const notificationStats = getNotificationStats();
 
-  // ✅ Valeurs par défaut sécurisées
-  const safeTranslations = {
-    gamingClubTitle: 'Gaming Club',
-    managementSystemSubtitle: 'Système de Gestion',
-    notificationsHeader: 'Notifications',
-    noNewNotifications: 'Aucune nouvelle notification',
-    profileSettings: 'Paramètres',
-    logout: 'Déconnexion',
-    ...translations
-  };
-
   // ✅ Extraction sécurisée des données utilisateur
   const userData = user?.data || user || {};
   const firstName = userData.firstName || '';
@@ -39,7 +28,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
 
   const userNameDisplay = (firstName || lastName) 
     ? `${firstName} ${lastName}`.trim() 
-    : (username || "Utilisateur");
+    : (username || getTranslation('common.user', "Utilisateur"));
 
   const initials = firstName && lastName
     ? `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
@@ -62,7 +51,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
   };
 
   const renderGameTitle = () => {
-    const title = safeTranslations.gamingClubTitle || 'Gaming Club';
+    const title = getTranslation('header.gamingClubTitle', 'Gaming Club');
     const titleParts = title.split(' ');
     
     if (titleParts.length >= 2) {
@@ -103,7 +92,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
         <button
           onClick={toggleSidebar}
           className="p-2 rounded-lg text-gray-300 hover:bg-purple-600/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
-          aria-label={sidebarExpanded ? 'Fermer le menu' : 'Ouvrir le menu'}
+          aria-label={sidebarExpanded ? getTranslation('common.closeMenu', 'Fermer le menu') : getTranslation('common.openMenu', 'Ouvrir le menu')}
         >
           {sidebarExpanded ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -112,7 +101,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
           <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center shadow-lg">
             <img 
               src="/logo2.png" 
-              alt="Gaming Club Logo" 
+              alt={getTranslation('header.logoAlt', "Gaming Club Logo")} 
               className="w-8 h-8 object-contain transition-transform duration-200 hover:scale-110"
               onError={(e) => {
                 e.target.style.display = 'none';
@@ -131,7 +120,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
               {renderGameTitle()}
             </h1>
             <p className="text-xs text-gray-400 hidden sm:block transition-colors duration-300">
-              {safeTranslations.managementSystemSubtitle}
+              {getTranslation('header.managementSystemSubtitle', 'Système de Gestion')}
             </p>
           </div>
         </div>
@@ -147,7 +136,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
               setShowUserMenu(false);
             }}
             className="relative p-2 rounded-lg text-gray-300 hover:bg-purple-600/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
-            aria-label="Notifications"
+            aria-label={getTranslation('notifications.title', "Notifications")}
           >
             <Bell size={20} />
             {notificationStats.unread > 0 && (
@@ -173,7 +162,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
               setShowNotifications(false);
             }}
             className="flex items-center space-x-2 p-2 rounded-lg text-gray-300 hover:bg-purple-600/20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400/50"
-            aria-label="Menu utilisateur"
+            aria-label={getTranslation('common.userMenu', "Menu utilisateur")}
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg transition-transform duration-200 hover:scale-110">
               <span className="text-white font-semibold text-sm">
@@ -185,7 +174,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
                 {userNameDisplay}
               </p>
               <p className="text-gray-400 text-xs transition-colors duration-300">
-                {userData?.role?.name || 'Rôle non défini'}
+                {userData?.role?.name || getTranslation('common.roleNotDefined', 'Rôle non défini')}
               </p>
             </div>
           </button>
@@ -205,7 +194,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
                     {userNameDisplay}
                   </p>
                   <p className="text-gray-400 text-xs">
-                    {userData?.role?.name || 'Rôle non défini'}
+                    {userData?.role?.name || getTranslation('common.roleNotDefined', 'Rôle non défini')}
                   </p>
                 </div>
 
@@ -214,7 +203,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
                   className="flex items-center space-x-3 w-full px-4 py-3 text-gray-300 hover:bg-purple-600/20 transition-all duration-200 text-left"
                 >
                   <Settings size={16} />
-                  <span>{safeTranslations.profileSettings}</span>
+                  <span>{getTranslation('settings.profileSettings', 'Paramètres')}</span>
                 </button>
                 
                 <div className="border-t border-gray-600/30 my-1"></div>
@@ -224,7 +213,7 @@ const Header = ({ toggleSidebar = () => {}, sidebarExpanded = true, isMobile = f
                   className="flex items-center space-x-3 w-full px-4 py-3 text-red-300 hover:bg-red-600/20 transition-all duration-200 text-left"
                 >
                   <LogOut size={16} />
-                  <span>{safeTranslations.logout}</span>
+                  <span>{getTranslation('auth.logout', 'Déconnexion')}</span>
                 </button>
               </div>
             </div>

@@ -18,7 +18,7 @@ const Permissions = () => {
     message: '' 
   });
 
-  const { translations } = useLanguage();
+  const { translations, getTranslation } = useLanguage();
   const { hasPermission } = useAuth();
   const { effectiveTheme } = useTheme();
   
@@ -38,10 +38,10 @@ const Permissions = () => {
     if (!Array.isArray(permissions)) return [];
     
     return permissions.filter(permission => 
-      (translations.permissionNames?.[permission.name] || permission.name)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (getTranslation(`permissionNames.${permission.name}`, permission.name))?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       permission.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [permissions, searchTerm, translations.permissionNames]);
+  }, [permissions, searchTerm, getTranslation]);
 
   const groupPermissionsByCategory = (perms) => {
     const permissionGroups = {
@@ -133,7 +133,7 @@ const Permissions = () => {
       show: true,
       permission,
       title: translations.deletePermission,
-      message: `${translations.deletePermissionConfirmation} "${translations.permissionNames?.[permission.name] || permission.name}" ? ${translations.thisActionCannot}`
+      message: `${translations.deletePermissionConfirmation} "${getTranslation(`permissionNames.${permission.name}`, permission.name)}" ? ${translations.thisActionCannot}`
     });
   };
 
@@ -360,7 +360,7 @@ const Permissions = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center space-x-2">
                               <div className={`font-medium ${getTextColorClass(true)}`}>
-                                {translations.permissionNames?.[permission.name] || permission.name}
+                                {getTranslation(`permissionNames.${permission.name}`, permission.name)}
                               </div>
                               {isCritical && (
                                 <div className={`flex items-center px-2 py-1 text-xs rounded ${getOrangeAccentBgClass()} ${getOrangeAccentColorClass()}`}>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useMemo } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useActiveSessions } from '../../hooks/useMonitoring';
 import { useMonitoring } from '../../contexts/MonitoringContext';
 import { formatDistanceToNow } from 'date-fns';
@@ -17,6 +18,7 @@ import {
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 
 const SessionsList = ({ onUserSelect }) => {
+  const { getTranslation } = useLanguage();
   const { filters, updateFilters, terminateSession } = useMonitoring();
   const [sessionToTerminate, setSessionToTerminate] = useState(null);
   const { data, isLoading, isError, error, refetch } = useActiveSessions();
@@ -42,7 +44,7 @@ const SessionsList = ({ onUserSelect }) => {
         // Rafraîchir immédiatement après terminaison
         setTimeout(() => refetch(), 1000);
       } catch (error) {
-        console.error('Erreur terminaison session:', error);
+        console.error('Session termination error:', error);
       }
     }
   };
@@ -65,7 +67,7 @@ const SessionsList = ({ onUserSelect }) => {
   if (isError) {
     return (
       <div className="p-4 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
-        <p>Erreur lors du chargement des sessions: {error.message}</p>
+        <p>Error loading sessions: {error.message}</p>
         <button 
           onClick={() => refetch()} 
           className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -85,16 +87,16 @@ const SessionsList = ({ onUserSelect }) => {
       <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
         <div>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-            Sessions Utilisateurs
+            User Sessions
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            {counts.total} sessions au total ({counts.active} actives, {counts.inactive} inactives)
+            {counts.total} sessions total ({counts.active} active, {counts.inactive} inactive)
           </p>
         </div>
         
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-700 dark:text-gray-300">
-            Période d'inactivité:
+            Inactivity period:
           </span>
           <div className="flex rounded-md shadow-sm">
             {[15, 30, 60].map(minutes => (
@@ -116,19 +118,19 @@ const SessionsList = ({ onUserSelect }) => {
             onClick={() => refetch()}
             className="flex items-center px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
           >
-            <RefreshCw className="w-4 h-4 mr-1" /> Actualiser
+            <RefreshCw className="w-4 h-4 mr-1" /> {getTranslation('retry', 'Actualiser')}
           </button>
         </div>
       </div>
       
       {/* Sessions actives */}
       <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-3 flex items-center">
-        <Activity className="w-5 h-5 mr-2 text-green-500" /> Sessions actives ({active.length})
+        <Activity className="w-5 h-5 mr-2 text-green-500" /> {getTranslation('monitoring.activeSessions', 'Sessions Actives')} ({active.length})
       </h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {active.length === 0 ? (
-          <p className="text-gray-500 col-span-full">Aucune session active pour le moment</p>
+          <p className="text-gray-500 col-span-full">{getTranslation('monitoring.noActiveSessions', 'Aucune session active')}</p>
         ) : (
           active.map(session => (
             <SessionCard 
@@ -145,7 +147,7 @@ const SessionsList = ({ onUserSelect }) => {
       {inactive.length > 0 && (
         <>
           <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-3 flex items-center">
-            <Clock className="w-5 h-5 mr-2 text-yellow-500" /> Sessions inactives ({inactive.length})
+            <Clock className="w-5 h-5 mr-2 text-yellow-500" /> {getTranslation('monitoring.inactiveSessions', 'Sessions Inactives')} ({inactive.length})
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

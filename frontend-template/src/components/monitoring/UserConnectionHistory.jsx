@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { useUserConnectionHistory } from '../../hooks/useMonitoring';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -6,6 +7,7 @@ import { Spinner, Badge, Card, Button } from '../ui';
 import { ArrowLeft, Calendar, Clock, Globe, Monitor } from 'lucide-react';
 
 const UserConnectionHistory = ({ userId, onBack }) => {
+  const { getTranslation } = useLanguage();
   const { data, isLoading, isError, error, refetch } = useUserConnectionHistory(userId);
   
   if (isLoading && !data) {
@@ -15,15 +17,15 @@ const UserConnectionHistory = ({ userId, onBack }) => {
   if (isError) {
     return (
       <div className="p-4 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded-lg">
-        <p>Erreur lors du chargement de l'historique: {error.message}</p>
-        <Button onClick={() => refetch()} className="mt-2">Réessayer</Button>
+        <p>{getTranslation('errorLoadingLogs', 'Erreur de chargement')}: {error.message}</p>
+        <Button onClick={() => refetch()} className="mt-2">{getTranslation('retry', 'Réessayer')}</Button>
       </div>
     );
   }
   
   const sessions = data?.data || [];
   
-  // Séparer les sessions actives et terminées
+  // Separate active and ended sessions
   const activeSessions = sessions.filter(session => session.isActive);
   const inactiveSessions = sessions.filter(session => !session.isActive);
   
@@ -32,24 +34,24 @@ const UserConnectionHistory = ({ userId, onBack }) => {
       <div className="flex items-center mb-6">
         {onBack && (
           <Button variant="ghost" onClick={onBack} className="mr-3">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Retour
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </Button>
         )}
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-          Historique de connexion de l'utilisateur
+          User connection history
         </h2>
       </div>
       
       {/* ✅ CORRECTION: Utilisation de tabs simples au lieu du composant Tabs manquant */}
       <div className="space-y-6">
-        {/* Toutes les sessions */}
+        {/* All sessions */}
         <div>
           <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-            Toutes les sessions ({sessions.length})
+            {getTranslation('monitoring.sessions', 'Sessions')} ({sessions.length})
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sessions.length === 0 ? (
-              <p className="text-gray-500 col-span-full">Aucune session trouvée pour cet utilisateur</p>
+              <p className="text-gray-500 col-span-full">{getTranslation('monitoring.noSessions', 'Aucune session trouvée')}</p>
             ) : (
               sessions.map(session => (
                 <SessionHistoryCard key={session.id} session={session} />
@@ -58,11 +60,11 @@ const UserConnectionHistory = ({ userId, onBack }) => {
           </div>
         </div>
         
-        {/* Sessions actives */}
+        {/* Active sessions */}
         {activeSessions.length > 0 && (
           <div>
             <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-              Sessions actives ({activeSessions.length})
+              {getTranslation('monitoring.activeSessions', 'Sessions Actives')} ({activeSessions.length})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {activeSessions.map(session => (
@@ -72,11 +74,11 @@ const UserConnectionHistory = ({ userId, onBack }) => {
           </div>
         )}
         
-        {/* Sessions terminées */}
+        {/* Ended sessions */}
         {inactiveSessions.length > 0 && (
           <div>
             <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-              Sessions terminées ({inactiveSessions.length})
+              {getTranslation('monitoring.endedSessions', 'Sessions Terminées')} ({inactiveSessions.length})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {inactiveSessions.map(session => (

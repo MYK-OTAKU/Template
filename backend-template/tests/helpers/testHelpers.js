@@ -3,7 +3,7 @@ const { User, Role, Permission } = require('../../models');
 const { generateToken } = require('../../config/jwt');
 
 /**
- * Factory pour créer des rôles selon le cahier des charges Gaming Center
+ * Factory pour créer des rôles selon le cahier des charges Dashboard Template
  */
 class TestFactory {
   static async createRole(name, permissions = []) {
@@ -34,7 +34,7 @@ class TestFactory {
       password: 'Test123!',
       firstName: 'Test',
       lastName: 'User',
-      email: 'test@gaming-center.com',
+      email: 'test@template.com',
       isActive: true,
       twoFactorEnabled: false
     };
@@ -57,7 +57,7 @@ class TestFactory {
       username: 'admin',
       password: 'Admin123!',
       firstName: 'Admin',
-      lastName: 'Gaming Center',
+      lastName: 'Template',
       roleId: adminRole.id
     });
   }
@@ -69,7 +69,7 @@ class TestFactory {
       username: 'employee',
       password: 'Employee123!',
       firstName: 'Employee',
-      lastName: 'Gaming Center',
+      lastName: 'Template',
       roleId: employeeRole.id
     });
   }

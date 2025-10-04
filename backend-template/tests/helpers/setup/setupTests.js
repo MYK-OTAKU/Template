@@ -28,5 +28,5 @@ jest.mock('../../services/AuditService', () => ({
 
 // Configuration des variables d'environnement pour les tests
 process.env.NODE_ENV = 'test';
-process.env.JWT_SECRET = 'gaming-center-test-secret-2024';
-process.env.APP_NAME = 'Gaming Center Test';
+process.env.JWT_SECRET = 'dashboard-template-test-secret-2024';
+process.env.APP_NAME = 'Dashboard Template Test';
